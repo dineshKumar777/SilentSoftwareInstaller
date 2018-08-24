@@ -17,32 +17,27 @@ namespace SoftwareInstaller
         List<string> appNames = new List<string>();
         List<string> silentCode = new List<string>();
         List<string> registryAppNames = new List<string>();
-        List<string> appSelected = new List<string>().Distinct().ToList();
+        List<string> appSelected = new List<string>();
         List<string> checkedNodes = new List<string>();
-        List<string> installedApps = new List<string>().Distinct().ToList();
-        public TreeNode selectedNode;
+        List<string> installedApps = new List<string>();
+        string softwaresFolderPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "SoftwareSetup");
         public MainTab()
         {
             InitializeComponent();
-            TreeView mainTreeView = new TreeView();
         }
 
-        private void filePathButton(object sender, EventArgs e)
+        private void filePath_btn_Click(object sender, EventArgs e)
         {
-            int i = 0;
-            string path = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            string setupPath = path + @"\SoftwareSetup";
-            RadioButton box = null;
-            if (Directory.Exists(setupPath))
+            int offset = 0;
+            if (Directory.Exists(softwaresFolderPath))
             {
-                var directories = Directory.GetDirectories(setupPath);
-                foreach (var n in directories)
+                foreach (var listofFolders in Directory.GetDirectories(softwaresFolderPath))
                 {
-                    var setupPath2 = n.Split('\\').Last();
-                    box = new RadioButton { Name = setupPath2, Text = setupPath2, Width = 120, Height = 30, AutoCheck = true, Location = new Point(50 + (i), 50) };
-                    this.Controls.Add(box);
-                    i += 120;
-                    box.CheckedChanged += new EventHandler(RadioButton_Checked);
+                    var softwareFolderName = listofFolders.Split('\\').Last();
+                    RadioButton radio_btn = new RadioButton { Name = softwareFolderName, Text = softwareFolderName, Width = 120, Height = 30, AutoCheck = true, Location = new Point(50 + (offset), 50) };
+                    Controls.Add(radio_btn);
+                    offset += 120;
+                    radio_btn.CheckedChanged += new EventHandler(RadioButton_Checked);
                 }
             }
             else
@@ -51,44 +46,33 @@ namespace SoftwareInstaller
             }
         }
 
-        public void updateButton1()
-        {
-            SelectFiles.Enabled = true;
-        }
-        public void updateButton3()
-        {
-            Install.Enabled = true;
-        }
-
         private void RadioButton_Checked(object sender, EventArgs e)
         {
-            RadioButton box = (sender as RadioButton);
-            if (box.Checked)
+            RadioButton radio_btn = (sender as RadioButton);
+            if (radio_btn.Checked)
             {
-                updateButton1();
-                string setupPath3 = box.Text;
-                string path = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-                string setupPath = path + @"\SoftwareSetup\" + setupPath3;
-                ListDirectory(mainTreeView, setupPath);
-                if (box.Checked == true)
+                SelectFiles.Enabled = true;
+                string selectedSoftwareFolder = Path.Combine(softwaresFolderPath, radio_btn.Text);
+                ListDirectory(MainTreeView, selectedSoftwareFolder);
+                if (radio_btn.Checked)
                 {
-                    mainTreeView.ExpandAll();
-                    foreach (TreeNode nodes in mainTreeView.Nodes)
+                    MainTreeView.ExpandAll();
+                    foreach (TreeNode parentNode in MainTreeView.Nodes)
                     {
-                        nodes.Checked = true;
-                        foreach (TreeNode node in nodes.Nodes)
+                        parentNode.Checked = true;
+                        foreach (TreeNode childNodes in parentNode.Nodes)
                         {
-                            node.Checked = true;
+                            childNodes.Checked = true;
                         }
                     }
                 }
             }
         }
 
-        private void ListDirectory(TreeView treeView, string path)
+        private void ListDirectory(TreeView MainTreeview, string selectedSoftwareFolder)
         {
-            treeView.Nodes.Clear();
-            treeView.Nodes.Add(CreateDirectoryNode(new DirectoryInfo(path).Name, path));
+            MainTreeview.Nodes.Clear();
+            MainTreeview.Nodes.Add(CreateDirectoryNode(new DirectoryInfo(selectedSoftwareFolder).Name, selectedSoftwareFolder));
         }
 
         private static TreeNode CreateDirectoryNode(string rootFolderName, string folderPath)
@@ -98,18 +82,17 @@ namespace SoftwareInstaller
 
         private static TreeNode[] GetChildNodes(string folderPath)
         {
-            var files = Directory.EnumerateFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(".exe") || s.EndsWith(".msi"));
-            var childs = new TreeNode[files.Count()];
-            var i = 0;
-            foreach (var file in files)
+            var EXEandMSI_Files = Directory.EnumerateFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(".exe") || s.EndsWith(".msi"));
+            var childNodes = new TreeNode[EXEandMSI_Files.Count()];
+            int count_EXEandMSI_Files = EXEandMSI_Files.Count();
+            for (int index = 0; index < count_EXEandMSI_Files; index++)
             {
-                childs[i] = new TreeNode(Path.GetFileName(file));
-                i++;
+                childNodes[index] = new TreeNode(Path.GetFileName(EXEandMSI_Files.ElementAt(index)));
             }
-            return childs;
+            return childNodes;
         }
 
-        private void mainTreeView_NodeMouseClick_1(object sender, TreeNodeMouseClickEventArgs e)
+        private void MainTreeView_NodeMouseClick_1(object sender, TreeNodeMouseClickEventArgs e)
         {
             foreach (TreeNode node in e.Node.Nodes)
             {
@@ -117,7 +100,7 @@ namespace SoftwareInstaller
             }
         }
 
-        private void mainTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        private void MainTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node.Checked)
             {
@@ -129,106 +112,87 @@ namespace SoftwareInstaller
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void SelectFiles_btn_Click(object sender, EventArgs e)
         {
-            TreeNode oMainNode = mainTreeView.Nodes[0];
-            PrintNodesRecursive(oMainNode);
-            updateButton3();
+            PrintNodesRecursive(MainTreeView.Nodes[0]);
+            Install.Enabled = true;
             SelectedAppList.Items.Clear();
-            foreach (var n in appSelected)
+            foreach (var appToList in appSelected)
             {
-                SelectedAppList.Items.Add(n);
+                SelectedAppList.Items.Add(appToList);
             }
         }
 
-        public void PrintNodesRecursive(TreeNode oParentNode)
+        public void PrintNodesRecursive(TreeNode parentNode)
         {
-            foreach (TreeNode oSubNode in oParentNode.Nodes)
+            foreach (TreeNode subNode in parentNode.Nodes)
             {
-                if (oSubNode.Checked == false)
+                if (!subNode.Checked)
                 {
-                    appSelected.Remove(oSubNode.Text);
+                    appSelected.Remove(subNode.Text);
                 }
-                if (!Contain(oSubNode.Text))
+                if (!appSelected.Any(check => check.Contains(subNode.Text)))
                 {
-                    if (oSubNode.Checked == true)
+                    if (subNode.Checked)
                     {
-                        appSelected.Add(oSubNode.Text);
+                        appSelected.Add(subNode.Text);
                     }
                 }
             }
         }
 
-        public bool Contain(string textValue)
+        private void install_btn_Click(object sender, EventArgs e)
         {
-            bool contained = appSelected.Any(l => l.Contains(textValue));
-            if (contained)
+            foreach (var selectedAppNames in appSelected)
             {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            foreach (var SelectedAppNames in appSelected)
-            {
-                string path = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-                string setupPath1 = path + @"\SoftwareSetup";
-                var files = Directory.GetFiles(setupPath1, SelectedAppNames, SearchOption.AllDirectories);
-                foreach (var fileNames in files)
+                var fileInfo = Directory.GetFiles(softwaresFolderPath, selectedAppNames, SearchOption.AllDirectories);
+                foreach (var file in fileInfo)
                 {
-                    DirectoryInfo setupPath = new DirectoryInfo(fileNames);
-                    string one = setupPath.FullName;
-                    silentInstall(SelectedAppNames, one); 
+                    string filePath = new DirectoryInfo(file).FullName;
+                    silentInstall(selectedAppNames, filePath);
                 }
             }
-            CountofAppforInstallation = appSelected.Count;
+            CountofAppforInstallation = appSelected.Count();
             MessageBox.Show("Number of apps added for installation : " + CountofAppforInstallation + "\n" + "Number of apps installed : " + CountofAppInstalled);
             CountofAppInstalled = 0;
         }
-        
-        public void appCon()
+
+        public void valueofAppConfig()
         {
             foreach (string key in ConfigurationManager.AppSettings)
             {
                 if (key.StartsWith("app"))
                 {
-                    string value = ConfigurationManager.AppSettings[key];
-                    string[] one = value.Split(';');
-                    appNames.Add(one[0]);
-                    silentCode.Add(one[1]);
-                    registryAppNames.Add(one[2]);
+                    string[] appInfo = ConfigurationManager.AppSettings[key].Split(';');
+                    appNames.Add(appInfo[0]);
+                    silentCode.Add(appInfo[1]);
+                    registryAppNames.Add(appInfo[2]);
                 }
             }
         }
 
-        public void silentInstall(string appname, string setupPath)
+        public void silentInstall(string selectedAppNames, string filePath)
         {
-            appCon();
+            valueofAppConfig();
             try
             {
-                string appname1 = appname.ToUpper();
                 int appNameIndex = -1;
                 for (int i = 0; i < appNames.Count; i++)
                 {
-                    if (appname1.Contains(appNames[i].ToUpper()))
+                    if (selectedAppNames.ToUpper().Contains(appNames[i].ToUpper()))
                     {
                         appNameIndex = i;
                         break;
                     }
                 }
-                LogList.Items.Add("Starting to install the " + appname);
-                if (appname1.Contains(appNames[appNameIndex].ToUpper()))
+                LogList.Items.Add("Starting to install the " + selectedAppNames);
+                if (selectedAppNames.ToUpper().Contains(appNames[appNameIndex].ToUpper()))
                 {
                     if (!isAppInstalled(registryAppNames[appNameIndex]))
                     {
-                        LogList.Items.Add("-->Installing " + appname);
+                        LogList.Items.Add("-->Installing " + selectedAppNames);
                         LogList.TopIndex = LogList.Items.Count - 1;
-                        RunInstallMSI(setupPath, silentCode[appNameIndex]);
+                        RunInstallMSI(filePath, silentCode[appNameIndex]);
                         LogList.Items.Add("-->Installation Complete, Will start to check in registry");
                         LogList.TopIndex = LogList.Items.Count - 1;
                         CountofAppInstalled++;
@@ -243,24 +207,23 @@ namespace SoftwareInstaller
                 }
                 else
                 {
-                    LogList.Items.Add("-->Unable to find" + appname + " in custom list. Please add specific commands or install it manually...");
+                    LogList.Items.Add("-->Unable to find" + selectedAppNames + " in custom list. Please add specific commands or install it manually...");
                 }
             }
             catch (Exception ex)
             {
-                LogList.Items.Add("-->Error when installing" + appname);
+                LogList.Items.Add("-->Error when installing" + selectedAppNames);
                 LogList.Items.Add(ex.StackTrace);
                 throw;
             }
         }
 
-        public void RunInstallMSI(string exePath, string cmd)
+        public void RunInstallMSI(string filePath, string silentInstallCode)
         {
             try
             {
-                Process process = new Process();
-                ProcessStartInfo startInfo = new ProcessStartInfo(exePath, cmd);
-                process = Process.Start(startInfo);
+                ProcessStartInfo startInfo = new ProcessStartInfo(filePath, silentInstallCode);
+                Process process = Process.Start(startInfo);
                 process.WaitForExit();
                 LogList.Items.Add("-->Application installed successfully with exit code : " + process.ExitCode);
             }
@@ -309,7 +272,7 @@ namespace SoftwareInstaller
                                 var appSelectedName = sk.GetValue("DisplayName");
                                 if (appSelectedName != null)
                                 {
-                                        installedApps.Add(appSelectedName.ToString().ToUpper());
+                                    installedApps.Add(appSelectedName.ToString().ToUpper());
                                 }
                             }
                             catch (Exception ex)
@@ -322,9 +285,8 @@ namespace SoftwareInstaller
                     }
                 }
             }
-            string appName1 = registryAppNames.ToUpper();
-            bool contained = installedApps.Any(l => l.Contains(appName1));
-            if (contained)
+
+            if (installedApps.Any(check => check.Contains(registryAppNames.ToUpper())))
             {
                 LogList.Items.Add("-->" + registryAppNames + " app present in registry");
                 LogList.TopIndex = LogList.Items.Count - 1;
