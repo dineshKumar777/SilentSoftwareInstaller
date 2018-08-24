@@ -149,7 +149,7 @@ namespace SoftwareInstaller
                 foreach (var file in fileInfo)
                 {
                     string filePath = new DirectoryInfo(file).FullName;
-                    silentInstall(selectedAppNames, filePath);
+                    SilentInstall(selectedAppNames, filePath);
                 }
             }
             CountofAppforInstallation = appSelected.Count();
@@ -157,7 +157,7 @@ namespace SoftwareInstaller
             CountofAppInstalled = 0;
         }
 
-        public void valueofAppConfig()
+        public void ValueofAppConfig()
         {
             foreach (string key in ConfigurationManager.AppSettings)
             {
@@ -171,9 +171,9 @@ namespace SoftwareInstaller
             }
         }
 
-        public void silentInstall(string selectedAppNames, string filePath)
+        public void SilentInstall(string selectedAppNames, string filePath)
         {
-            valueofAppConfig();
+            ValueofAppConfig();
             try
             {
                 int appNameIndex = -1;
