@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainTab));
             this.FilePath = new System.Windows.Forms.Button();
-            this.mainTreeView = new System.Windows.Forms.TreeView();
+            this.MainTreeView = new System.Windows.Forms.TreeView();
             this.SelectFiles = new System.Windows.Forms.Button();
             this.SelectedAppList = new System.Windows.Forms.ListBox();
             this.Install = new System.Windows.Forms.Button();
@@ -47,22 +47,22 @@
             this.FilePath.TabIndex = 8;
             this.FilePath.Text = "FilePath";
             this.FilePath.UseVisualStyleBackColor = false;
-            this.FilePath.Click += new System.EventHandler(this.filePathButton);
+            this.FilePath.Click += new System.EventHandler(this.filePath_btn_Click);
             // 
-            // mainTreeView
+            // MainTreeView
             // 
-            this.mainTreeView.AllowDrop = true;
-            this.mainTreeView.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.mainTreeView.CheckBoxes = true;
-            this.mainTreeView.FullRowSelect = true;
-            this.mainTreeView.HotTracking = true;
-            this.mainTreeView.Location = new System.Drawing.Point(12, 121);
-            this.mainTreeView.Name = "mainTreeView";
-            this.mainTreeView.ShowPlusMinus = false;
-            this.mainTreeView.Size = new System.Drawing.Size(423, 450);
-            this.mainTreeView.TabIndex = 9;
-            this.mainTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.mainTreeView_AfterSelect);
-            this.mainTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.mainTreeView_NodeMouseClick_1);
+            this.MainTreeView.AllowDrop = true;
+            this.MainTreeView.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.MainTreeView.CheckBoxes = true;
+            this.MainTreeView.FullRowSelect = true;
+            this.MainTreeView.HotTracking = true;
+            this.MainTreeView.Location = new System.Drawing.Point(12, 121);
+            this.MainTreeView.Name = "MainTreeView";
+            this.MainTreeView.ShowPlusMinus = false;
+            this.MainTreeView.Size = new System.Drawing.Size(423, 450);
+            this.MainTreeView.TabIndex = 9;
+            this.MainTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MainTreeView_AfterSelect);
+            this.MainTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.MainTreeView_NodeMouseClick_1);
             // 
             // SelectFiles
             // 
@@ -75,7 +75,7 @@
             this.SelectFiles.TabIndex = 10;
             this.SelectFiles.Text = "SelectFiles";
             this.SelectFiles.UseVisualStyleBackColor = false;
-            this.SelectFiles.Click += new System.EventHandler(this.button1_Click);
+            this.SelectFiles.Click += new System.EventHandler(this.SelectFiles_btn_Click);
             // 
             // SelectedAppList
             // 
@@ -99,7 +99,7 @@
             this.Install.TabIndex = 14;
             this.Install.Text = "Install";
             this.Install.UseVisualStyleBackColor = false;
-            this.Install.Click += new System.EventHandler(this.button3_Click);
+            this.Install.Click += new System.EventHandler(this.install_btn_Click);
             // 
             // LogList
             // 
@@ -123,7 +123,7 @@
             this.Controls.Add(this.Install);
             this.Controls.Add(this.SelectedAppList);
             this.Controls.Add(this.SelectFiles);
-            this.Controls.Add(this.mainTreeView);
+            this.Controls.Add(this.MainTreeView);
             this.Controls.Add(this.FilePath);
             this.Font = new System.Drawing.Font("Calibri", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.SystemColors.MenuHighlight;
@@ -142,7 +142,7 @@
 
         #endregion
         private System.Windows.Forms.Button FilePath;
-        private System.Windows.Forms.TreeView mainTreeView;
+        private System.Windows.Forms.TreeView MainTreeView;
         private System.Windows.Forms.Button SelectFiles;
         private System.Windows.Forms.ListBox SelectedAppList;
         private System.Windows.Forms.Button Install;
