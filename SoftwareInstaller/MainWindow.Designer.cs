@@ -47,7 +47,7 @@
             this.FilePath.TabIndex = 8;
             this.FilePath.Text = "FilePath";
             this.FilePath.UseVisualStyleBackColor = false;
-            this.FilePath.Click += new System.EventHandler(this.filePath_btn_Click);
+            this.FilePath.Click += new System.EventHandler(this.FilePathBtn_Click);
             // 
             // MainTreeView
             // 
@@ -75,7 +75,7 @@
             this.SelectFiles.TabIndex = 10;
             this.SelectFiles.Text = "SelectFiles";
             this.SelectFiles.UseVisualStyleBackColor = false;
-            this.SelectFiles.Click += new System.EventHandler(this.SelectFiles_btn_Click);
+            this.SelectFiles.Click += new System.EventHandler(this.SelectFilesBtn_Click);
             // 
             // SelectedAppList
             // 

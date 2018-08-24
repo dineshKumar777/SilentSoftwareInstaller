@@ -12,8 +12,8 @@ namespace SoftwareInstaller
 {
     public partial class MainTab : Form
     {
-        int CountofAppforInstallation = 0;
-        int CountofAppInstalled = 0;
+        int countofAppforInstallation = 0;
+        int countofAppInstalled = 0;
         List<string> appNames = new List<string>();
         List<string> silentCode = new List<string>();
         List<string> registryAppNames = new List<string>();
@@ -26,7 +26,7 @@ namespace SoftwareInstaller
             InitializeComponent();
         }
 
-        private void filePath_btn_Click(object sender, EventArgs e)
+        private void FilePathBtn_Click(object sender, EventArgs e)
         {
             int offset = 0;
             if (Directory.Exists(softwaresFolderPath))
@@ -112,7 +112,7 @@ namespace SoftwareInstaller
             }
         }
 
-        private void SelectFiles_btn_Click(object sender, EventArgs e)
+        private void SelectFilesBtn_Click(object sender, EventArgs e)
         {
             PrintNodesRecursive(MainTreeView.Nodes[0]);
             Install.Enabled = true;
@@ -152,9 +152,9 @@ namespace SoftwareInstaller
                     SilentInstall(selectedAppNames, filePath);
                 }
             }
-            CountofAppforInstallation = appSelected.Count();
-            MessageBox.Show("Number of apps added for installation : " + CountofAppforInstallation + "\n" + "Number of apps installed : " + CountofAppInstalled);
-            CountofAppInstalled = 0;
+            countofAppforInstallation = appSelected.Count();
+            MessageBox.Show("Number of apps added for installation : " + countofAppforInstallation + "\n" + "Number of apps installed : " + countofAppInstalled);
+            countofAppInstalled = 0;
         }
 
         public void ValueofAppConfig()
@@ -188,15 +188,15 @@ namespace SoftwareInstaller
                 LogList.Items.Add("Starting to install the " + selectedAppNames);
                 if (selectedAppNames.ToUpper().Contains(appNames[appNameIndex].ToUpper()))
                 {
-                    if (!isAppInstalled(registryAppNames[appNameIndex]))
+                    if (!IsAppInstalled(registryAppNames[appNameIndex]))
                     {
                         LogList.Items.Add("-->Installing " + selectedAppNames);
                         LogList.TopIndex = LogList.Items.Count - 1;
                         RunInstallMSI(filePath, silentCode[appNameIndex]);
                         LogList.Items.Add("-->Installation Complete, Will start to check in registry");
                         LogList.TopIndex = LogList.Items.Count - 1;
-                        CountofAppInstalled++;
-                        isAppInstalled(registryAppNames[appNameIndex]);
+                        countofAppInstalled++;
+                        IsAppInstalled(registryAppNames[appNameIndex]);
                         LogList.Items.Add("-->Checking in registry is completed if app found ignore if not check it manually");
                         LogList.TopIndex = LogList.Items.Count - 1;
                     }
@@ -234,7 +234,7 @@ namespace SoftwareInstaller
             }
         }
 
-        public bool isAppInstalled(string registryAppNames)
+        public bool IsAppInstalled(string registryAppNames)
         {
             if (CheckInstallationState(registryAppNames, RegistryView.Registry64))
             {
