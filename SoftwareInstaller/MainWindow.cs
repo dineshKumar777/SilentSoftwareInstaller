@@ -141,7 +141,7 @@ namespace SoftwareInstaller
             }
         }
 
-        private void install_btn_Click(object sender, EventArgs e)
+        private void InstallBtn_Click(object sender, EventArgs e)
         {
             foreach (var selectedAppNames in appSelected)
             {

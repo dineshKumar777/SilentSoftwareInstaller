@@ -99,7 +99,7 @@
             this.Install.TabIndex = 14;
             this.Install.Text = "Install";
             this.Install.UseVisualStyleBackColor = false;
-            this.Install.Click += new System.EventHandler(this.install_btn_Click);
+            this.Install.Click += new System.EventHandler(this.InstallBtn_Click);
             // 
             // LogList
             // 
