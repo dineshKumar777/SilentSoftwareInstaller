@@ -12,15 +12,14 @@ namespace SoftwareInstaller
 {
     public partial class MainTab : Form
     {
-        int countofAppforInstallation = 0;
-        int countofAppInstalled = 0;
+        int countofAppInstalled;
         List<string> appNames = new List<string>();
         List<string> silentCode = new List<string>();
         List<string> registryAppNames = new List<string>();
         List<string> appSelected = new List<string>();
         List<string> checkedNodes = new List<string>();
         List<string> installedApps = new List<string>();
-        string softwaresFolderPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "SoftwareSetup");
+        string softwaresFolderPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), Constant.SOFTWARE_SETUP);
         public MainTab()
         {
             InitializeComponent();
@@ -42,7 +41,7 @@ namespace SoftwareInstaller
             }
             else
             {
-                MessageBox.Show("Not a valid file or directory");
+                MessageBox.Show(Constant.DIRECTORY_NOT_FOUND);
             }
         }
 
@@ -52,8 +51,7 @@ namespace SoftwareInstaller
             if (radio_btn.Checked)
             {
                 SelectFiles.Enabled = true;
-                string selectedSoftwareFolder = Path.Combine(softwaresFolderPath, radio_btn.Text);
-                ListDirectory(MainTreeView, selectedSoftwareFolder);
+                ListDirectory(MainTreeView, Path.Combine(softwaresFolderPath, radio_btn.Text));
                 if (radio_btn.Checked)
                 {
                     MainTreeView.ExpandAll();
@@ -82,7 +80,7 @@ namespace SoftwareInstaller
 
         private static TreeNode[] GetChildNodes(string folderPath)
         {
-            var EXEandMSI_Files = Directory.EnumerateFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(".exe") || s.EndsWith(".msi"));
+            var EXEandMSI_Files = Directory.EnumerateFiles(folderPath, Constant.STAR_DOT_STAR, SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(Constant.EXE) || s.EndsWith(Constant.MSI));
             var childNodes = new TreeNode[EXEandMSI_Files.Count()];
             int count_EXEandMSI_Files = EXEandMSI_Files.Count();
             for (int index = 0; index < count_EXEandMSI_Files; index++)
@@ -145,15 +143,12 @@ namespace SoftwareInstaller
         {
             foreach (var selectedAppNames in appSelected)
             {
-                var fileInfo = Directory.GetFiles(softwaresFolderPath, selectedAppNames, SearchOption.AllDirectories);
-                foreach (var file in fileInfo)
+                foreach (var file in Directory.GetFiles(softwaresFolderPath, selectedAppNames, SearchOption.AllDirectories))
                 {
-                    string filePath = new DirectoryInfo(file).FullName;
-                    SilentInstall(selectedAppNames, filePath);
+                    SilentInstall(selectedAppNames, new DirectoryInfo(file).FullName);
                 }
             }
-            countofAppforInstallation = appSelected.Count();
-            MessageBox.Show("Number of apps added for installation : " + countofAppforInstallation + "\n" + "Number of apps installed : " + countofAppInstalled);
+            MessageBox.Show(Constant.NUMBER_OF_APPS_ADDED + appSelected.Count + Constant.SPACING + Constant.NUMBER_OF_APPS_INSTALLED + countofAppInstalled);
             countofAppInstalled = 0;
         }
 
@@ -161,7 +156,7 @@ namespace SoftwareInstaller
         {
             foreach (string key in ConfigurationManager.AppSettings)
             {
-                if (key.StartsWith("app"))
+                if (key.StartsWith(Constant.APP))
                 {
                     string[] appInfo = ConfigurationManager.AppSettings[key].Split(';');
                     appNames.Add(appInfo[0]);
@@ -185,34 +180,34 @@ namespace SoftwareInstaller
                         break;
                     }
                 }
-                LogList.Items.Add("Starting to install the " + selectedAppNames);
+                LogList.Items.Add(Constant.STARTING_TO_INSTALL + selectedAppNames);
                 if (selectedAppNames.ToUpper().Contains(appNames[appNameIndex].ToUpper()))
                 {
                     if (!IsAppInstalled(registryAppNames[appNameIndex]))
                     {
-                        LogList.Items.Add("-->Installing " + selectedAppNames);
+                        LogList.Items.Add(Constant.INSTALLING + selectedAppNames);
                         LogList.TopIndex = LogList.Items.Count - 1;
                         RunInstallMSI(filePath, silentCode[appNameIndex]);
-                        LogList.Items.Add("-->Installation Complete, Will start to check in registry");
+                        LogList.Items.Add(Constant.INSTALLATION_COMPLETE);
                         LogList.TopIndex = LogList.Items.Count - 1;
                         countofAppInstalled++;
                         IsAppInstalled(registryAppNames[appNameIndex]);
-                        LogList.Items.Add("-->Checking in registry is completed if app found ignore if not check it manually");
+                        LogList.Items.Add(Constant.CHECKING_IN_REGISTRY);
                         LogList.TopIndex = LogList.Items.Count - 1;
                     }
                     else
                     {
-                        LogList.Items.Add("-->" + registryAppNames[appNameIndex] + " is already installed.. skipping installation");
+                        LogList.Items.Add(Constant.ARROR_FOR_SPACING + registryAppNames[appNameIndex] + Constant.SKIPPING_INSTALLATION);
                     }
                 }
                 else
                 {
-                    LogList.Items.Add("-->Unable to find" + selectedAppNames + " in custom list. Please add specific commands or install it manually...");
+                    LogList.Items.Add(Constant.UNABLE_TO_FIND + selectedAppNames + Constant.ADD_SPECIFIC_COMMAND);
                 }
             }
             catch (Exception ex)
             {
-                LogList.Items.Add("-->Error when installing" + selectedAppNames);
+                LogList.Items.Add(Constant.ERROR_WHEN_INSATLLING + selectedAppNames);
                 LogList.Items.Add(ex.StackTrace);
                 throw;
             }
@@ -225,11 +220,11 @@ namespace SoftwareInstaller
                 ProcessStartInfo startInfo = new ProcessStartInfo(filePath, silentInstallCode);
                 Process process = Process.Start(startInfo);
                 process.WaitForExit();
-                LogList.Items.Add("-->Application installed successfully with exit code : " + process.ExitCode);
+                LogList.Items.Add(Constant.APP_INSTALLED_SUCCESSFULLY + process.ExitCode);
             }
             catch (Exception)
             {
-                LogList.Items.Add("-->There was a problem installing the application!");
+                LogList.Items.Add(Constant.PROBLEM_WHEN_INSTALLING);
                 throw;
             }
         }
@@ -238,19 +233,19 @@ namespace SoftwareInstaller
         {
             if (CheckInstallationState(registryAppNames, RegistryView.Registry64))
             {
-                LogList.Items.Add("-->App found, which is in 64bit registry...");
+                LogList.Items.Add(Constant.APP_FOUND_64_BIT);
                 LogList.TopIndex = LogList.Items.Count - 1;
                 return true;
             }
             else if (CheckInstallationState(registryAppNames, RegistryView.Registry32))
             {
-                LogList.Items.Add("-->App found, which is in 32bit registry...");
+                LogList.Items.Add(Constant.APP_FOUND_32_BIT);
                 LogList.TopIndex = LogList.Items.Count - 1;
                 return true;
             }
             else
             {
-                LogList.Items.Add("-->Checked in registry, app cannot be found.");
+                LogList.Items.Add(Constant.APP_CANNOT_BE_FOUND);
                 LogList.TopIndex = LogList.Items.Count - 1;
                 return false;
             }
@@ -258,10 +253,9 @@ namespace SoftwareInstaller
 
         public bool CheckInstallationState(string registryAppNames, RegistryView regBit)
         {
-            string registryKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
             using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, regBit))
             {
-                using (RegistryKey rk = baseKey.OpenSubKey(registryKey))
+                using (RegistryKey rk = baseKey.OpenSubKey(Constant.APP_REGISTRY_LOCATION))
                 {
                     foreach (string skName in rk.GetSubKeyNames())
                     {
@@ -269,7 +263,7 @@ namespace SoftwareInstaller
                         {
                             try
                             {
-                                var appSelectedName = sk.GetValue("DisplayName");
+                                var appSelectedName = sk.GetValue(Constant.DISPLAY_NAME);
                                 if (appSelectedName != null)
                                 {
                                     installedApps.Add(appSelectedName.ToString().ToUpper());
@@ -277,7 +271,7 @@ namespace SoftwareInstaller
                             }
                             catch (Exception ex)
                             {
-                                LogList.Items.Add("-->Exception occured when reading Registery : " + ex.StackTrace);
+                                LogList.Items.Add(Constant.ERROR_READING_REGISTRY + ex.StackTrace);
                                 LogList.TopIndex = LogList.Items.Count - 1;
                                 throw;
                             }
@@ -288,7 +282,7 @@ namespace SoftwareInstaller
 
             if (installedApps.Any(check => check.Contains(registryAppNames.ToUpper())))
             {
-                LogList.Items.Add("-->" + registryAppNames + " app present in registry");
+                LogList.Items.Add("-->" + registryAppNames + Constant.APP_PRESENT_IN_REGISTRY);
                 LogList.TopIndex = LogList.Items.Count - 1;
                 return true;
             }
