@@ -20,6 +20,7 @@ namespace SoftwareInstaller
         List<string> checkedNodes = new List<string>();
         List<string> installedApps = new List<string>();
         string softwaresFolderPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), Constant.SOFTWARE_SETUP);
+
         public MainTab()
         {
             InitializeComponent();
