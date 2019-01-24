@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using log4net;
 using System.Reflection;
 using log4net.Config;
+using AutoUpdaterDotNET;
 
 namespace SoftwareInstaller
 {
@@ -29,6 +30,7 @@ namespace SoftwareInstaller
         {
             InitializeComponent();
         }
+
 
         private void FilePathBtn_Click(object sender, EventArgs e)
         {
@@ -321,6 +323,18 @@ namespace SoftwareInstaller
             {
                 return false;
             }
+        }
+
+        private void MainTab_Load(object sender, EventArgs e)
+        {
+            //string versionInfoLink = "https://cdn.jsdelivr.net/gh/dineshKumar777/SilentSoftwareInstaller/VersionInfo.xml";
+            string versionInfoLink = "http://rbsoft.org/updates/AutoUpdaterTest.xml";
+
+            AutoUpdater.ShowSkipButton = false;
+            AutoUpdater.ShowRemindLaterButton = false;
+            AutoUpdater.OpenDownloadPage = true;
+
+            AutoUpdater.Start(versionInfoLink);
         }
     }
 }
