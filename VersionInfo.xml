@@ -1,8 +1,8 @@
-
-
-<?xml version="1.0" encoding="UTF-8"?>
 <item>
-  <version>1.0.7</version>
-  <url>https://github.com/dineshKumar777/SilentSoftwareInstaller/releases/download/Latest/SilentSoftwareInstaller.zip</url>
-  <changelog>https://github.com/dineshKumar777/SilentSoftwareInstaller/releases</changelog>
+<version>2.0.0.0</version>
+<url>https://rbsoft.org/downloads/AutoUpdaterTest.zip</url>
+<changelog>
+https://github.com/ravibpatel/AutoUpdater.NET/releases
+</changelog>
+<mandatory mode="1">true</mandatory>
 </item>
