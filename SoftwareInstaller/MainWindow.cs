@@ -327,7 +327,7 @@ namespace SoftwareInstaller
 
         private void MainTab_Load(object sender, EventArgs e)
         {
-            string versionInfoLink = "https://cdn.jsdelivr.net/gh/dineshKumar777/SilentSoftwareInstaller/SoftwareInstaller/VersionInfo.xml";
+            string versionInfoLink = "https://cdn.jsdelivr.net/gh/dineshKumar777/SilentSoftwareInstaller@latest/SoftwareInstaller/VersionInfo.xml";
             //string versionInfoLink = "http://rbsoft.org/updates/AutoUpdaterTest.xml";
 
             AutoUpdater.ShowSkipButton = false;
