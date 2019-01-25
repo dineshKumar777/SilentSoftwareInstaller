@@ -131,7 +131,6 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainTab";
             this.Text = "SoftwareInstaller";
-            this.Load += new System.EventHandler(this.MainTab_Load);
             this.ResumeLayout(false);
 
         }
