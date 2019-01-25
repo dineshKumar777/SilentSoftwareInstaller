@@ -253,6 +253,12 @@ namespace SoftwareInstaller
         public void RunInstallMSI(string filePath, string silentInstallCode)
         {
             XmlConfigurator.Configure();
+
+            if (silentInstallCode.Contains("SECURITYMODE=SQL"))
+            {
+                silentInstallCode += " /SQLSYSADMINACCOUNTS=" + Environment.UserDomainName + "\\" + Environment.UserName + "";
+            }
+
             try
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(filePath, silentInstallCode);

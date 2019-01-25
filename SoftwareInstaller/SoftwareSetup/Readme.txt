@@ -1,0 +1,1 @@
+- For sql need to add current user as admin and also change evaluation mode to developer
