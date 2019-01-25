@@ -97,5 +97,8 @@
   <ItemGroup>
     <Content Include="VersionInfo.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CustomConfigurations\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
