@@ -329,7 +329,8 @@ namespace SoftwareInstaller
         // Autoupdater configuration & initialization
         private void MainTab_Load(object sender, EventArgs e)
         {
-            string versionInfoLink = "https://cdn.jsdelivr.net/gh/dineshKumar777/SilentSoftwareInstaller@latest/SoftwareInstaller/VersionInfo.xml";
+            //string versionInfoLink = "https://cdn.jsdelivr.net/gh/dineshKumar777/SilentSoftwareInstaller@latest/SoftwareInstaller/VersionInfo.xml";
+            string versionInfoLink = "https://raw.githack.com/dineshKumar777/SilentSoftwareInstaller/master/SoftwareInstaller/VersionInfo.xml";
 
             AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = false;
