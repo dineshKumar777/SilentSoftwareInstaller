@@ -203,7 +203,7 @@ namespace SoftwareInstaller
                 int appNameIndex = -1;
                 for (int i = 0; i < appNames.Count; i++)
                 {
-                    if (selectedAppNames.ToUpper().Contains(appNames[i].ToUpper()))
+                    if (selectedAppNames.ToUpper().StartsWith(appNames[i].ToUpper()))
                     {
                         appNameIndex = i;
                         break;
