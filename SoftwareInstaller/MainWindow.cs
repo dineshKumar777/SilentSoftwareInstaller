@@ -41,6 +41,7 @@ namespace SoftwareInstaller
             AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = false;
             AutoUpdater.OpenDownloadPage = false;
+            AutoUpdater.RunUpdateAsAdmin = true;
             AutoUpdater.DownloadPath = Environment.CurrentDirectory;
 
             AutoUpdater.Start(versionInfoLink);
