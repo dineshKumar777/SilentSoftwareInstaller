@@ -256,7 +256,7 @@ namespace SoftwareInstaller
 
             if (silentInstallCode.Contains("SECURITYMODE=SQL"))
             {
-                silentInstallCode += " /SQLSYSADMINACCOUNTS=" + Environment.UserDomainName + "\\" + Environment.UserName + "";
+                silentInstallCode += " /SQLSYSADMINACCOUNTS=" + Environment.UserDomainName + "\\" + Environment.UserName;
             }
 
             try
