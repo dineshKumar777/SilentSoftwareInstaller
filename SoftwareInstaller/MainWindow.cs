@@ -11,6 +11,7 @@ using log4net;
 using System.Reflection;
 using log4net.Config;
 using AutoUpdaterDotNET;
+using System.Threading;
 
 namespace SoftwareInstaller
 {
@@ -35,6 +36,8 @@ namespace SoftwareInstaller
         // Autoupdater configuration & initialization
         private void MainTab_Load(object sender, EventArgs e)
         {
+            AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
+
             //string versionInfoLink = "https://cdn.jsdelivr.net/gh/dineshKumar777/SilentSoftwareInstaller@latest/SoftwareInstaller/VersionInfo.xml";
             string versionInfoLink = "https://raw.githack.com/dineshKumar777/SilentSoftwareInstaller/master/SoftwareInstaller/VersionInfo.xml";
 
@@ -47,6 +50,12 @@ namespace SoftwareInstaller
             AutoUpdater.Start(versionInfoLink);
         }
 
+        private void AutoUpdater_ApplicationExitEvent()
+        {
+            Text = @"Closing application...";
+            Thread.Sleep(5000);
+            Application.Exit();
+        }
 
         private void FilePathBtn_Click(object sender, EventArgs e)
         {
