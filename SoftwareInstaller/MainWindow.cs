@@ -36,7 +36,7 @@ namespace SoftwareInstaller
         // Autoupdater configuration & initialization
         private void MainTab_Load(object sender, EventArgs e)
         {
-            AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
+            //AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
 
             //string versionInfoLink = "https://cdn.jsdelivr.net/gh/dineshKumar777/SilentSoftwareInstaller@latest/SoftwareInstaller/VersionInfo.xml";
             string versionInfoLink = "https://raw.githack.com/dineshKumar777/SilentSoftwareInstaller/master/SoftwareInstaller/VersionInfo.xml";
@@ -47,15 +47,15 @@ namespace SoftwareInstaller
             AutoUpdater.RunUpdateAsAdmin = true;
             AutoUpdater.DownloadPath = Environment.CurrentDirectory;
 
-            AutoUpdater.Start(versionInfoLink);
+            //AutoUpdater.Start(versionInfoLink);
         }
 
-        private void AutoUpdater_ApplicationExitEvent()
-        {
-            Text = @"Closing application...";
-            Thread.Sleep(5000);
-            Application.Exit();
-        }
+        //private void AutoUpdater_ApplicationExitEvent()
+        //{
+        //    Text = @"Closing application...";
+        //    Thread.Sleep(5000);
+        //    Application.Exit();
+        //}
 
         private void FilePathBtn_Click(object sender, EventArgs e)
         {
@@ -219,6 +219,12 @@ namespace SoftwareInstaller
                         break;
                     }
                 }
+                if(appNameIndex==-1)
+                {
+                    LogList.Items.Add(string.Concat(selectedAppNames, "---> failed!"));
+                    LogList.Items.Add("Check your app config");
+                    return;
+                }
                 LogList.Items.Add(Constant.STARTING_TO_INSTALL + selectedAppNames);
                 _log.Info(Constant.STARTING_TO_INSTALL + selectedAppNames);
                 if (selectedAppNames.ToUpper().Contains(appNames[appNameIndex].ToUpper()))
@@ -272,6 +278,7 @@ namespace SoftwareInstaller
             try
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(filePath, silentInstallCode);
+                startInfo.UseShellExecute = false; //disables file security warning when exe opening from network
                 Process process = Process.Start(startInfo);
                 process.WaitForExit();
                 //LogList.Items.Add(Constant.APP_INSTALLED_SUCCESSFULLY + process.ExitCode);
