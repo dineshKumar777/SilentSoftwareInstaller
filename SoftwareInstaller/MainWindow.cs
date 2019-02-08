@@ -10,6 +10,8 @@ using Microsoft.Win32;
 using log4net;
 using System.Reflection;
 using log4net.Config;
+using AutoUpdaterDotNET;
+using System.Threading;
 
 namespace SoftwareInstaller
 {
@@ -28,7 +30,32 @@ namespace SoftwareInstaller
         public MainTab()
         {
             InitializeComponent();
+            Load += new EventHandler(MainTab_Load);
         }
+
+        // Autoupdater configuration & initialization
+        private void MainTab_Load(object sender, EventArgs e)
+        {
+            //AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
+
+            //string versionInfoLink = "https://cdn.jsdelivr.net/gh/dineshKumar777/SilentSoftwareInstaller@latest/SoftwareInstaller/VersionInfo.xml";
+            string versionInfoLink = "https://raw.githack.com/dineshKumar777/SilentSoftwareInstaller/master/SoftwareInstaller/VersionInfo.xml";
+
+            AutoUpdater.ShowSkipButton = false;
+            AutoUpdater.ShowRemindLaterButton = false;
+            AutoUpdater.OpenDownloadPage = false;
+            AutoUpdater.RunUpdateAsAdmin = true;
+            AutoUpdater.DownloadPath = Environment.CurrentDirectory;
+
+            //AutoUpdater.Start(versionInfoLink);
+        }
+
+        //private void AutoUpdater_ApplicationExitEvent()
+        //{
+        //    Text = @"Closing application...";
+        //    Thread.Sleep(5000);
+        //    Application.Exit();
+        //}
 
         private void FilePathBtn_Click(object sender, EventArgs e)
         {
@@ -48,6 +75,7 @@ namespace SoftwareInstaller
             }
             else
             {
+                _log.Error(Constant.DIRECTORY_NOT_FOUND);
                 MessageBox.Show(Constant.DIRECTORY_NOT_FOUND);
             }
         }
@@ -185,11 +213,17 @@ namespace SoftwareInstaller
                 int appNameIndex = -1;
                 for (int i = 0; i < appNames.Count; i++)
                 {
-                    if (selectedAppNames.ToUpper().Contains(appNames[i].ToUpper()))
+                    if (selectedAppNames.ToUpper().StartsWith(appNames[i].ToUpper()))
                     {
                         appNameIndex = i;
                         break;
                     }
+                }
+                if(appNameIndex==-1)
+                {
+                    LogList.Items.Add(string.Concat(selectedAppNames, "---> failed!"));
+                    LogList.Items.Add("Check your app config");
+                    return;
                 }
                 LogList.Items.Add(Constant.STARTING_TO_INSTALL + selectedAppNames);
                 _log.Info(Constant.STARTING_TO_INSTALL + selectedAppNames);
@@ -197,7 +231,7 @@ namespace SoftwareInstaller
                 {
                     if (!IsAppInstalled(registryAppNames[appNameIndex]))
                     {
-                        LogList.Items.Add(Constant.INSTALLING + selectedAppNames);
+                        //LogList.Items.Add(Constant.INSTALLING + selectedAppNames);
                         _log.Info(Constant.INSTALLING + selectedAppNames);
                         LogList.TopIndex = LogList.Items.Count - 1;
                         RunInstallMSI(filePath, silentCode[appNameIndex]);
@@ -213,7 +247,7 @@ namespace SoftwareInstaller
                     else
                     {
                         LogList.Items.Add(Constant.ARROW_SPACING_FOR_LOGLIST + registryAppNames[appNameIndex] + Constant.SKIPPING_INSTALLATION);
-                        _log.Error(Constant.ARROW_SPACING_FOR_LOGLIST + registryAppNames[appNameIndex] + Constant.SKIPPING_INSTALLATION);
+                        _log.Info(Constant.ARROW_SPACING_FOR_LOGLIST + registryAppNames[appNameIndex] + Constant.SKIPPING_INSTALLATION);
                     }
                 }
                 else
@@ -225,7 +259,8 @@ namespace SoftwareInstaller
             catch (Exception ex)
             {
                 LogList.Items.Add(Constant.ERROR_WHEN_INSATLLING + selectedAppNames);
-                LogList.Items.Add(ex.StackTrace);
+                //LogList.Items.Add(ex.StackTrace);
+                _log.Error(Constant.ERROR_WHEN_INSATLLING + selectedAppNames);
                 _log.Error(ex.StackTrace);
                 throw;
             }
@@ -234,12 +269,19 @@ namespace SoftwareInstaller
         public void RunInstallMSI(string filePath, string silentInstallCode)
         {
             XmlConfigurator.Configure();
+
+            if (silentInstallCode.Contains("SECURITYMODE=SQL"))
+            {
+                silentInstallCode += " /SQLSYSADMINACCOUNTS=" + Environment.UserDomainName + "\\" + Environment.UserName;
+            }
+
             try
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(filePath, silentInstallCode);
+                startInfo.UseShellExecute = false; //disables file security warning when exe opening from network
                 Process process = Process.Start(startInfo);
                 process.WaitForExit();
-                LogList.Items.Add(Constant.APP_INSTALLED_SUCCESSFULLY + process.ExitCode);
+                //LogList.Items.Add(Constant.APP_INSTALLED_SUCCESSFULLY + process.ExitCode);
                 _log.Info(Constant.APP_INSTALLED_SUCCESSFULLY + process.ExitCode);
             }
             catch (Exception)
@@ -255,21 +297,21 @@ namespace SoftwareInstaller
             XmlConfigurator.Configure();
             if (CheckInstallationState(registryAppNames, RegistryView.Registry64))
             {
-                LogList.Items.Add(Constant.APP_FOUND_64_BIT);
+                //LogList.Items.Add(Constant.APP_FOUND_64_BIT);
                 _log.Info(Constant.APP_FOUND_64_BIT);
                 LogList.TopIndex = LogList.Items.Count - 1;
                 return true;
             }
             else if (CheckInstallationState(registryAppNames, RegistryView.Registry32))
             {
-                LogList.Items.Add(Constant.APP_FOUND_32_BIT);
+                //LogList.Items.Add(Constant.APP_FOUND_32_BIT);
                 _log.Info(Constant.APP_FOUND_32_BIT);
                 LogList.TopIndex = LogList.Items.Count - 1;
                 return true;
             }
             else
             {
-                LogList.Items.Add(Constant.APP_CANNOT_BE_FOUND);
+                //LogList.Items.Add(Constant.APP_CANNOT_BE_FOUND);
                 _log.Info(Constant.APP_CANNOT_BE_FOUND);
                 LogList.TopIndex = LogList.Items.Count - 1;
                 return false;
@@ -320,5 +362,9 @@ namespace SoftwareInstaller
                 return false;
             }
         }
+
+
+        
+
     }
 }

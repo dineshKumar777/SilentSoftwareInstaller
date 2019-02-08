@@ -37,8 +37,8 @@
         #region Error message
         public const string PROBLEM_WHEN_INSTALLING = ARROW_SPACING_FOR_LOGLIST + "There was a problem installing the application!";
         public const string APP_CANNOT_BE_FOUND = ARROW_SPACING_FOR_LOGLIST + "Checked in registry, app cannot be found.";
-        public const string UNABLE_TO_FIND = ARROW_SPACING_FOR_LOGLIST + "Unable to find";
-        public const string DIRECTORY_NOT_FOUND = "Not a valid file or directory";
+        public const string UNABLE_TO_FIND = ARROW_SPACING_FOR_LOGLIST + "Unable to find ";
+        public const string DIRECTORY_NOT_FOUND = "Not a valid file or directory. Need 'SoftwareSetup' folder in parent directory.";
         public const string ERROR_WHEN_INSATLLING = ARROW_SPACING_FOR_LOGLIST + "Error when installing";
         #endregion
 
